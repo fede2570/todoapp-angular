@@ -1,0 +1,81 @@
+<div class="container">
+  <h1>Hola Mundo este es mi primer proyecto</h1>
+  <h2>{{welcome}}</h2>
+  <ul>
+    <li *ngFor="let task of tasks">
+      {{task}}
+    </li>
+  </ul>
+  <hr />
+  <h2>{{'Hola'.repeat(4)}}</h2>
+  <p>la suma es 3 + 3 es {{3 + 3}}</p>
+  <p>Hola soy {{name}}</p>
+  <hr />
+  <img [src]="img" alt="">
+  <input type="text" [value]="name">
+  <button [disabled]="disabled">Click me</button>
+
+  <p>persona: {{ person.name }}</p>
+  <img [src]="person.avatar" alt="">
+  <hr />
+  <button (click)="clickHandler()">click me</button>
+  <br />
+  <button (dblclick)="clickHandler()">double click me</button>
+  <p>(change)</p>
+  <input type="number" [value]="person.name" (change)="changeHandler($event)">
+  <p>(keydown)</p>
+  <input type="text" [value]="person.name" (keydown)="keydownHandler($event)">
+  <p>(keydown con shift + t)</p>
+  <input type="text" [value]="person.name" (keydown.shift.t)="clickHandler()">
+  <hr />
+  <h1>Signals</h1>
+  <input type="text" [value]="name2()" (change)="changeHandler2($event)">
+  <p>Hola soy {{ name2() }}</p>
+  <hr />
+  <h1>Directivas de control</h1>
+  <ul>
+    <p>Total: {{tasks2().length}}</p>
+    <li *ngFor="let task of tasks2(); index as i">
+      {{i}} {{task}}
+    </li>
+  </ul>
+  <hr />
+  <div *ngIf="1 !== 1">
+    My content
+  </div>
+  <div *ngIf="name2() === 'David'">
+    Soy David
+  </div>
+  <input type="number" [value]="person2().codigo" (change)="changeCode($event)">
+  <div *ngIf="person2().name === 'David' && person2().codigo === 1; else elseBlock">
+    Condicional con objetos
+  </div>
+  <ng-template #elseBlock>
+    Condiciona con else
+  </ng-template>
+  <hr />
+  <p>Ejemplo Switch</p>
+  <input type="text" [value]="person2().name" (change)="changeName($event)">
+  <div [ngSwitch]="person2().name">
+    <p *ngSwitchCase="'David'">Soy David</p>
+    <p *ngSwitchCase="'Messi'">Soy Messi</p>
+    <p *ngSwitchCase="'Ronaldo'">Soy Ronaldo</p>
+    <p *ngSwitchDefault>No soy nadie</p>
+  </div>
+  <hr />
+  <input type="color" [formControl]="colorCtrl">
+  <p>color: {{ colorCtrl.value }}</p>
+  <svg>
+    <g>
+      <rect x="0" y="0" height="100" width="100" [attr.fill]="colorCtrl.value"/>
+    </g>
+  </svg>
+  <input type="number" [formControl]="widthCtrl">
+  <span class="box" [style.width.px]="widthCtrl.value"></span>
+  <hr />
+  <p>
+    <input type="text" [formControl]="nameCtrl"> <br />
+    <span class="message-error" [class.show]="nameCtrl.invalid && nameCtrl.touched">Nombre invalido</span>
+  </p>
+  <input type="text">
+</div>
