@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, computed, effect, inject, Injector, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Task } from '../../models/task.model';
@@ -13,7 +13,7 @@ import { Task } from '../../models/task.model';
 })
 export class HomeComponent {
   tasks = signal<Task[]>([
-    {
+    /*{
       id: Date.now(),
       title: 'Crear proyecto',
       completed: false
@@ -22,8 +22,23 @@ export class HomeComponent {
       id: Date.now(),
       title: 'Crear componentes',
       completed: false
-    }
+    }*/
   ]);
+
+  filter = signal<'all'| 'pending' | 'completed'>('all');
+  //Se crea un nuevo estado de los estados de filter y tasks
+  tasksByFilter = computed(() => {
+    const filter = this.filter();
+    const tasks = this.tasks();
+    //Calcular estado
+    if (filter === 'pending') {
+      return tasks.filter(task => !task.completed)
+    }
+    if (filter === 'completed') {
+      return tasks.filter(task => task.completed);
+    }
+    return tasks;
+  })
 
   newTaskCtrl = new FormControl('', {
     nonNullable: true,
@@ -31,6 +46,27 @@ export class HomeComponent {
       Validators.required,
     ]
   });
+
+  injector = inject(Injector);
+
+  ngOnInit() {
+    const storage = localStorage.getItem('tasks');
+    if (storage) {
+      const tasks = JSON.parse(storage);
+      this.tasks.set(tasks);
+    }
+    //Se ejecuta después de inicializar la aplicación
+    this.trackTask();
+  }
+
+  trackTask() {
+    //Si el effect no está dentro del constructor se agrega un injector
+    effect(() => {
+      const tasks = this.tasks();
+      console.log(tasks);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }, {injector: this.injector});
+  }
 
   changeHandler() {
     if (this.newTaskCtrl.valid) {
@@ -104,4 +140,7 @@ export class HomeComponent {
     })
   }
 
+  changeFilter(filter: 'all'| 'pending' | 'completed') {
+    this.filter.set(filter)
+  }
 }
